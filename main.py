@@ -11,7 +11,10 @@ from bokeh.layouts import column, row
 from bokeh.models import ColumnDataSource, HoverTool, DateSlider, Slider, Label, CustomJS, LabelSet, Button
 from bokeh.tile_providers import CARTODBPOSITRON, get_provider
 from pyproj import Proj, transform, Transformer
-from creds import my_creds # dictionary with api_id and api_hash keys
+try:
+    from creds import my_creds # dictionary with api_id and api_hash keys
+except:
+    print('cannot find creds. Okay if the parsed csv already exists.')
 
 longlat2mercator = Transformer.from_proj("epsg:4326", "epsg:3857")
 good_etas = 'דקה', 'דקה וחצי', '45 שניות', '15 שניות', '30 שניות'
@@ -151,7 +154,7 @@ def gen_bokeh(df,
     delay_slider = Slider(start=0, end=1000, step=10,
                         value=200, title='Animation delay (ms)', width=MAX_W//2)
 
-    label_xy = longlat2mercator.transform(30.5,34)
+    label_xy = longlat2mercator.transform(31.,34)
     label_src = ColumnDataSource(data=dict(text=['Hello, use the sliders']))
     label = LabelSet(text='text',x=label_xy[0],y=label_xy[1],source=label_src)
     p.add_layout(label)
@@ -217,7 +220,7 @@ if __name__ != '__main__': # server: bokeh server --show main.py
     print(__name__)
     df = pd.read_csv('/tmp/oref_proc.csv') # gen this through main scope with telegram credentials
     # jitter
-    df['lat'] += np.random.randn(len(df['lat']))*0.003
-    df['long'] += np.random.randn(len(df['long']))*0.003
+    df['lat'] += np.random.randn(len(df['lat']))*0.008
+    df['long'] += np.random.randn(len(df['long']))*0.008
     ret = gen_bokeh(df)
     curdoc().add_root(ret)
