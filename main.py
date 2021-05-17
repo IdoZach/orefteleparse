@@ -78,7 +78,7 @@ def parse_timeline(fname:Path=Path('/tmp/oref_telegram.txt'), show_unrecognized=
     df = df.drop('dt',axis=1)
     return df
 
-def process_df(df, out_fname:Path):
+def process_latlong(df, out_fname:Path):
     df = df.loc[df['eta'].isin(good_etas)]
     geolocator = Nominatim(user_agent="my_app")
     latlongs={}
@@ -211,7 +211,7 @@ if __name__ == '__main__':
     messages = get_messages(client)
     save_messages(messages)
     df = parse_timeline()
-    process_df(df,out_fname=Path('/tmp/oref_proc.csv'))
+    process_latlong(df,out_fname=Path('/tmp/oref_proc.csv'))
 
 if __name__ != '__main__': # server: bokeh server --show main.py
     print(__name__)
